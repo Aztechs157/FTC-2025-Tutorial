@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 
 @TeleOp(name = "mechanumnew2 (Blocks to Java)")
-public class mechanumnew2 extends LinearOpMode {
+public class mecanumDriveBase extends LinearOpMode {
 
   private DcMotor DriveFL;
   private DcMotor DriveBL;
