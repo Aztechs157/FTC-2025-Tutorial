@@ -6,9 +6,13 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
 
-@TeleOp(name = "mechanumnew2 (Blocks to Java)")
-public class mecanumDriveBase extends LinearOpMode {
+@TeleOp(name = "Brute Force Robot Teleop")
+public class bruteForceTeleop extends LinearOpMode {
+  lessCowbellDrive drive = new lessCowbellDrive();
+  lessCowbellIntake intake = new lessCowbellIntake();
 
   private DcMotor DriveFL;
   private DcMotor DriveBL;
@@ -50,13 +54,8 @@ public class mecanumDriveBase extends LinearOpMode {
     float lateral;
     float yaw;
     double max;
-
-    DriveFL = hardwareMap.get(DcMotor.class, "front_left_drive");
-    DriveBL = hardwareMap.get(DcMotor.class, "back_left_drive");
-    DriveFR = hardwareMap.get(DcMotor.class, "front_right_drive");
-    DriveBR = hardwareMap.get(DcMotor.class, "back_right_drive");
-    intakeLeft = hardwareMap.get(DcMotor.class, "intakeLeft");
-    intakeRight = hardwareMap.get(DcMotor.class, "intakeRight");
+    drive.init(hardwareMap);
+    intake.init(hardwareMap);
     spindexer = hardwareMap.get(CRServo.class, "spindexer");
     hopper = hardwareMap.get(DcMotor.class, "hopper");
     shooter = hardwareMap.get(DcMotor.class, "shooter");
@@ -77,12 +76,7 @@ public class mecanumDriveBase extends LinearOpMode {
     // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward.
     // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
     // <--- Click blue icon to see important note re. testing motor directions.
-    DriveFL.setDirection(DcMotor.Direction.FORWARD);
-    DriveBL.setDirection(DcMotor.Direction.FORWARD);
-    DriveFR.setDirection(DcMotor.Direction.REVERSE);
-    DriveBR.setDirection(DcMotor.Direction.REVERSE);
-    intakeLeft.setDirection(DcMotor.Direction.FORWARD);
-    intakeRight.setDirection(DcMotor.Direction.FORWARD);
+
     spindexer.setDirection(CRServo.Direction.FORWARD);
     // Wait for the game to start (driver presses START)
     telemetry.addData("Status", "Initialized");
@@ -112,21 +106,18 @@ public class mecanumDriveBase extends LinearOpMode {
         backRightPower = backRightPower / max;
       }
       // Send calculated power to wheels.
-      DriveFL.setPower(frontLeftPower);
-      DriveFR.setPower(frontRightPower);
-      DriveBL.setPower(backLeftPower);
-      DriveBR.setPower(backRightPower);
+      drive.setDriveFL(frontLeftPower);
+      drive.setDriveFR(frontRightPower);
+      drive.setDriveBL(backLeftPower);
+      drive.setDriveBR(backRightPower);
       if (gamepad1.right_trigger > 0.1) {
-        intakeLeft.setPower(-0.9);
-        intakeRight.setPower(1);
+        intake.setIntakeSpeed(1);
       }
       if (gamepad1.left_trigger > 0.1) {
-        intakeLeft.setPower(0.9);
-        intakeRight.setPower(-1);
+        intake.setIntakeSpeed(-1);
       }
       if (!(gamepad1.left_trigger > 0.1) && !(gamepad1.right_trigger > 0.1)) {
-        intakeLeft.setPower(0);
-        intakeRight.setPower(0);
+        intake.setIntakeSpeed(0);
       }
       if (gamepad2.left_bumper) {
         spindexer.setPower(1);
