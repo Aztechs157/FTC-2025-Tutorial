@@ -8,21 +8,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooter;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
 
 @TeleOp(name = "Brute Force Robot Teleop")
 public class bruteForceTeleop extends LinearOpMode {
   lessCowbellDrive drive = new lessCowbellDrive();
   lessCowbellIntake intake = new lessCowbellIntake();
+  lessCowbellShooter shooter = new lessCowbellShooter();
+  lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
 
-  private DcMotor DriveFL;
-  private DcMotor DriveBL;
-  private DcMotor DriveFR;
-  private DcMotor DriveBR;
-  private DcMotor intakeLeft;
-  private DcMotor intakeRight;
-  private CRServo spindexer;
-  private DcMotor hopper;
-  private DcMotor shooter;
+
 
   double frontLeftPower;
   double backLeftPower;
@@ -56,9 +52,8 @@ public class bruteForceTeleop extends LinearOpMode {
     double max;
     drive.init(hardwareMap);
     intake.init(hardwareMap);
-    spindexer = hardwareMap.get(CRServo.class, "spindexer");
-    hopper = hardwareMap.get(DcMotor.class, "hopper");
-    shooter = hardwareMap.get(DcMotor.class, "shooter");
+    shooter.init(hardwareMap);
+
 
     runtime = new ElapsedTime();
     // ########################################################################################
@@ -77,7 +72,6 @@ public class bruteForceTeleop extends LinearOpMode {
     // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
     // <--- Click blue icon to see important note re. testing motor directions.
 
-    spindexer.setDirection(CRServo.Direction.FORWARD);
     // Wait for the game to start (driver presses START)
     telemetry.addData("Status", "Initialized");
     telemetry.update();
@@ -120,20 +114,20 @@ public class bruteForceTeleop extends LinearOpMode {
         intake.setIntakeSpeed(0);
       }
       if (gamepad2.left_bumper) {
-        spindexer.setPower(1);
+        spindexer.setSpindexerSpeed(1);
       }
       if (gamepad2.right_bumper) {
-        spindexer.setPower(-1);
+        spindexer.setSpindexerSpeed(-1);
       }
       if (!gamepad2.left_bumper && !gamepad2.right_bumper) {
-        spindexer.setPower(0);
+        spindexer.setSpindexerSpeed(0);
       }
       if (gamepad1.a) {
-        hopper.setPower(-1);
-        shooter.setPower(-0.75);
+        shooter.setHopperSpeed(-1);
+        shooter.setShooterSpeed(-1.0);
       } else {
-        hopper.setPower(0);
-        shooter.setPower(0);
+        shooter.setHopperSpeed(0);
+        shooter.setShooterSpeed(0);
       }
       // Show the elapsed game time and wheel power.
       telemetry.addData("Status", "Run Time: " + runtime);
