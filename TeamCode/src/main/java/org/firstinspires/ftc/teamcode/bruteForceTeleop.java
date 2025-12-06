@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.teamcode.mechanisms.SpindexerSensor;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooter;
@@ -17,8 +16,8 @@ public class bruteForceTeleop extends LinearOpMode {
   lessCowbellIntake intake = new lessCowbellIntake();
   lessCowbellShooter shooter = new lessCowbellShooter();
   lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
-
-
+  SpindexerSensor intakeSensor;
+  SpindexerSensor hopperSensor;
 
   double frontLeftPower;
   double backLeftPower;
@@ -53,7 +52,9 @@ public class bruteForceTeleop extends LinearOpMode {
     drive.init(hardwareMap);
     intake.init(hardwareMap);
     shooter.init(hardwareMap);
-
+    spindexer.init(hardwareMap);
+    intakeSensor = new SpindexerSensor(hardwareMap, "colorSensor3-intake", telemetry);
+    hopperSensor = new SpindexerSensor(hardwareMap, "colorSensor1-hopper", telemetry);
 
     runtime = new ElapsedTime();
     // ########################################################################################
@@ -113,26 +114,42 @@ public class bruteForceTeleop extends LinearOpMode {
       if (!(gamepad1.left_trigger > 0.1) && !(gamepad1.right_trigger > 0.1)) {
         intake.setIntakeSpeed(0);
       }
-      if (gamepad2.left_bumper) {
+
+      if (gamepad2.dpad_down && intakeSensor.getDetectedColor() != SpindexerSensor.SensorState.empty) {
         spindexer.setSpindexerSpeed(1);
-      }
-      if (gamepad2.right_bumper) {
+      } else if (gamepad2.dpad_left && hopperSensor.getDetectedColor() != SpindexerSensor.SensorState.green) {
+        spindexer.setSpindexerSpeed(1);
+      } else if (gamepad2.dpad_right && hopperSensor.getDetectedColor() != SpindexerSensor.SensorState.purple) {
+        spindexer.setSpindexerSpeed(1);
+      } else if (gamepad2.dpad_up && !(hopperSensor.getDetectedColor() == SpindexerSensor.SensorState.green || hopperSensor.getDetectedColor() == SpindexerSensor.SensorState.purple)) {
+        spindexer.setSpindexerSpeed(1);
+      } else if (gamepad2.left_bumper) {
+        spindexer.setSpindexerSpeed(1);
+      } else if (gamepad2.right_bumper) {
         spindexer.setSpindexerSpeed(-1);
-      }
-      if (!gamepad2.left_bumper && !gamepad2.right_bumper) {
+      } else {
         spindexer.setSpindexerSpeed(0);
       }
-      if (gamepad1.a) {
-        shooter.setHopperSpeed(-1);
-        shooter.setShooterSpeed(-1.0);
+
+      if (gamepad2.right_trigger > 0.1) {
+        shooter.setShooterSpeed(-0.75);
       } else {
-        shooter.setHopperSpeed(0);
         shooter.setShooterSpeed(0);
       }
+
+      if (gamepad2.left_trigger > 0.1) {
+        shooter.setHopperSpeed(-1);
+      } else {
+        shooter.setHopperSpeed(0);
+      }
+
       // Show the elapsed game time and wheel power.
       telemetry.addData("Status", "Run Time: " + runtime);
       telemetry.addData("Front left/Right", JavaUtil.formatNumber(frontLeftPower, 4, 2) + ", " + JavaUtil.formatNumber(frontRightPower, 4, 2));
       telemetry.addData("Back  left/Right", JavaUtil.formatNumber(backLeftPower, 4, 2) + ", " + JavaUtil.formatNumber(backRightPower, 4, 2));
+      telemetry.addData("Intake Sensor State: ", intakeSensor.getDetectedColor());
+      telemetry.addData("Hopper Sensor State: ", hopperSensor.getDetectedColor());
+      telemetry.addData("dist", hopperSensor.test());
       telemetry.update();
     }
   }
