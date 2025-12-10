@@ -135,11 +135,24 @@ public class bruteForceTeleop extends LinearOpMode {
         shooter.setShooterSpeed(-0.75);
       } else {
         shooter.setShooterSpeed(0);
+
       }
 
       if (gamepad2.left_trigger > 0.1) {
         shooter.setHopperSpeed(-1);
-      } else {
+      }
+
+// top reverse shooting / intake
+      if(gamepad1.left_bumper){
+        shooter.setShooterSpeed(0.3);
+        shooter.setHopperSpeed( 1);
+      }
+      //stop shooter
+      if(!gamepad1.left_bumper && !(gamepad2.right_trigger > 0.1)){
+        shooter.setShooterSpeed(0);
+      }
+      // stop hopper
+      if(!(gamepad2.left_trigger > 0.1) && !gamepad1.left_bumper) {
         shooter.setHopperSpeed(0);
       }
 

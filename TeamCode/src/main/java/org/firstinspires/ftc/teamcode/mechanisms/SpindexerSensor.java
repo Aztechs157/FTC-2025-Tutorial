@@ -12,6 +12,7 @@ public class SpindexerSensor {
     private final NormalizedColorSensor colorSensor;
     private final DistanceSensor distanceSensor;
     private final Telemetry telemetry;
+    private final String deviceName;
     public enum SensorState {
         green,
         purple,
@@ -24,6 +25,7 @@ public class SpindexerSensor {
         distanceSensor = hwMap.get(DistanceSensor.class, deviceName);
         colorSensor.setGain(5);
         this.telemetry = telemetry;
+        this.deviceName = deviceName;
     }
 
     public double test() {
@@ -39,13 +41,25 @@ public class SpindexerSensor {
         normGreen = colors.green / colors.alpha;
         normBlue = colors.blue / colors.alpha;
 
-        if (dist > 1.75){
-            return SensorState.empty;
-        } else if (dist < 0.5){
+        if (this.deviceName.contains("hopper")) {
+            if (0.9 < dist && dist <= 1.1)
+            {
+                return SensorState.midSpin;
+            }
             if (normBlue > normGreen){
                 return SensorState.purple;
             } else{
                 return SensorState.green;
+            }
+        } else {
+            if (dist > 1.75) {
+                return SensorState.empty;
+            } else if (dist < 0.5) {
+                if (normBlue > normGreen) {
+                    return SensorState.purple;
+                } else {
+                    return SensorState.green;
+                }
             }
         }
 
