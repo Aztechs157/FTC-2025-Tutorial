@@ -30,12 +30,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooter;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -63,19 +64,27 @@ import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Encoder", group="Robot")
-public class driveWithEncoderAuto extends LinearOpMode {
+@Autonomous(name="6 Ball Auto - RED", group="Robot")
+public class straightLineAutoRED extends LinearOpMode {
      lessCowbellDrive drive = new lessCowbellDrive();
+     lessCowbellShooter shooter = new lessCowbellShooter();
+     lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
+
+     lessCowbellIntake intake = new lessCowbellIntake();
 
     /* Declare OpMode members. */
 
     private ElapsedTime     runtime = new ElapsedTime();
+    public static double shunitRatio = 11/16.25;
 
 
 
     @Override
     public void runOpMode() {
         drive.init(hardwareMap);
+        shooter.init(hardwareMap);
+        spindexer.init(hardwareMap);
+        intake.init(hardwareMap);
         drive.setDriveBLCurrentPosition();
         drive.setDriveBRCurrentPosition();
         drive.setDriveFRCurrentPosition();
@@ -93,14 +102,53 @@ public class driveWithEncoderAuto extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(drive.DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(drive.TURN_SPEED,   24, -24, 4.0);  // S2: Turn Right 24 Inches with 4 Sec timeout
-        encoderDrive(drive.DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(drive.DRIVE_SPEED,  -16.25,  -16.25, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        shoot(-0.75, 3);
+        encoderDrive(drive.DRIVE_SPEED,  -55,  -55, 5.0); //
+        encoderDrive(drive.DRIVE_SPEED,  16.5,  -16.5, 5.0); //
+        intake(1);
+        encoderDrive(drive.DRIVE_SPEED*0.5,  70,  70, 5.0);
+        encoderDrive(drive.DRIVE_SPEED,  -65,  -65, 5.0);
+        encoderDrive(drive.DRIVE_SPEED,  -15,  15, 5.0); //
+        intake(0);
+        encoderDrive(drive.DRIVE_SPEED,  55,  55, 5.0); //
+        shoot(-0.75, 3);
+//        encoderTranslate(drive.DRIVE_SPEED, -10, 10, 5.0);
+
+//        encoderDrive(drive.TURN_SPEED,   24, -24, 4.0);  // S2: Turn Right 24 Inches with 4 Sec timeout
+//        encoderDrive(drive.DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
     }
+
+    /*
+     *  Method to shoot
+     *  1) Start Shooter flywheel
+     *  2) Start Hopper
+     *  3) Rotate Spindexer to force balls up to shooter
+     */
+
+    public void shoot(double speed,
+                      int num_balls) {
+        for(int i = 0; i<= num_balls; i++) {
+            shooter.setShooterSpeed(speed);
+            sleep(1000);
+            shooter.setHopperSpeed(-1);
+            spindexer.setSpindexerSpeed(1);
+            sleep(500);
+            spindexer.setSpindexerSpeed(0);
+            shooter.setHopperSpeed(0);
+        }
+        shooter.setShooterSpeed(0);
+    }
+    public void intake(double speed) {
+
+            intake.setIntakeSpeed(speed);
+            spindexer.setSpindexerSpeed(speed);
+    }
+
 
     /*
      *  Method to perform a relative move, based on encoder counts.
@@ -118,10 +166,9 @@ public class driveWithEncoderAuto extends LinearOpMode {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
-
             // Determine new target position, and pass to motor controller
-            newLeftTarget = drive.setGetDriveBLCurrentPosition() + (int)(leftInches * drive.COUNTS_PER_INCH);
-            newRightTarget = drive.setGetDriveBRCurrentPosition() + (int)(rightInches * drive.COUNTS_PER_INCH);
+            newLeftTarget = drive.setGetDriveBLCurrentPosition() + (int)(leftInches * shunitRatio * drive.COUNTS_PER_INCH);
+            newRightTarget = drive.setGetDriveBRCurrentPosition() + (int)(rightInches * shunitRatio * drive.COUNTS_PER_INCH);
             drive.setBLTargetPosition(newLeftTarget);
             drive.setBRTargetPosition(newRightTarget);
             drive.setFLTargetPosition(newLeftTarget);
@@ -149,6 +196,67 @@ public class driveWithEncoderAuto extends LinearOpMode {
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
                    (drive.isFLBusy() && drive.isFRBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        (int)drive.setGetDriveBLCurrentPosition(), (int)drive.setGetDriveBRCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            drive.setDriveBL(0);
+            drive.setDriveBR(0);
+            drive.setDriveFL(0);
+            drive.setDriveFR(0);
+
+            // Turn off RUN_TO_POSITION
+            drive.setDriveFLModeToEncoder();
+            drive.setDriveFRModeToEncoder();
+            drive.setDriveBLModeToEncoder();
+            drive.setDriveBRModeToEncoder();
+
+            sleep(250);   // optional pause after each move.
+        }
+    }
+    public void encoderTranslate(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = drive.setGetDriveBLCurrentPosition() - (int)(leftInches * shunitRatio * drive.COUNTS_PER_INCH);
+            newRightTarget = drive.setGetDriveBRCurrentPosition() + (int)(rightInches * shunitRatio * drive.COUNTS_PER_INCH);
+            drive.setBLTargetPosition(newLeftTarget);
+            drive.setBRTargetPosition(newRightTarget);
+            drive.setFLTargetPosition(newLeftTarget);
+            drive.setFRTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            drive.setDriveFRModeToPosition();
+            drive.setDriveFLModeToPosition();
+            drive.setDriveBRModeToPosition();
+            drive.setDriveBLModeToPosition();
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            drive.setDriveFL(Math.abs(speed));
+            drive.setDriveFR(-Math.abs(speed));
+            drive.setDriveBL(-Math.abs(speed));
+            drive.setDriveBR(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (drive.isFLBusy() && drive.isFRBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
