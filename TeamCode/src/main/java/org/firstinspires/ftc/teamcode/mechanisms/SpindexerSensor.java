@@ -32,6 +32,11 @@ public class SpindexerSensor {
         return distanceSensor.getDistance(DistanceUnit.INCH);
     }
 
+
+public float hopperRed, hopperGreen, hopperBlue;
+
+
+
     public SensorState getDetectedColor() {
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         double dist = distanceSensor.getDistance(DistanceUnit.INCH);
@@ -40,9 +45,12 @@ public class SpindexerSensor {
         normRed = colors.red / colors.alpha;
         normGreen = colors.green / colors.alpha;
         normBlue = colors.blue / colors.alpha;
+        hopperRed = normRed;
+        hopperGreen = normGreen;
+        hopperBlue = normBlue;
 
         if (this.deviceName.contains("hopper")) {
-            if (0.9 < dist && dist <= 1.1)
+            if (1.5  < dist && dist <= 2.1)
             {
                 return SensorState.midSpin;
             }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.mechanisms.SpindexerSensor;
@@ -155,6 +156,8 @@ public class bruteForceTeleop extends LinearOpMode {
       if(!(gamepad2.left_trigger > 0.1) && !gamepad1.left_bumper) {
         shooter.setHopperSpeed(0);
       }
+
+
 
       // Show the elapsed game time and wheel power.
       telemetry.addData("Status", "Run Time: " + runtime);
