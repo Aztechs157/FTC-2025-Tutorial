@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -37,6 +38,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooterPIDF;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellWebcam;
 
 /*
  * This OpMode illustrates the concept of driving a path based on encoder counts.
@@ -63,14 +65,16 @@ import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
+@Disabled
+@Autonomous(name="6 Ball Auto Vision - BLUE", group="Robot")
+public class straightLineAutoBLUEVisionTest extends LinearOpMode {
+    lessCowbellDrive drive = new lessCowbellDrive();
+    lessCowbellShooterPIDF shooter = new lessCowbellShooterPIDF();
+    lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
 
-@Autonomous(name="6 Ball Auto - BLUE", group="Robot")
-public class straightLineAutoBLUE extends LinearOpMode {
-     lessCowbellDrive drive = new lessCowbellDrive();
-     lessCowbellShooterPIDF shooter = new lessCowbellShooterPIDF();
-     lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
+    lessCowbellIntake intake = new lessCowbellIntake();
 
-     lessCowbellIntake intake = new lessCowbellIntake();
+    lessCowbellWebcam webcam = new lessCowbellWebcam();
 
     /* Declare OpMode members. */
 
@@ -85,6 +89,7 @@ public class straightLineAutoBLUE extends LinearOpMode {
         shooter.init(hardwareMap);
         spindexer.init(hardwareMap);
         intake.init(hardwareMap);
+        webcam.init(hardwareMap, telemetry);
         drive.setDriveBLCurrentPosition();
         drive.setDriveBRCurrentPosition();
         drive.setDriveFRCurrentPosition();
@@ -146,8 +151,8 @@ public class straightLineAutoBLUE extends LinearOpMode {
     }
     public void intake(double intakeSpeed, double spindexerSpeed) {
 
-            intake.setIntakeSpeed(intakeSpeed);
-            spindexer.setSpindexerSpeed(spindexerSpeed);
+        intake.setIntakeSpeed(intakeSpeed);
+        spindexer.setSpindexerSpeed(spindexerSpeed);
     }
 
 
@@ -195,8 +200,8 @@ public class straightLineAutoBLUE extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (drive.isFLBusy() && drive.isFRBusy())) {
+                    (runtime.seconds() < timeoutS) &&
+                    (drive.isFLBusy() && drive.isFRBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
@@ -221,8 +226,8 @@ public class straightLineAutoBLUE extends LinearOpMode {
         }
     }
     public void encoderTranslate(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
+                                 double leftInches, double rightInches,
+                                 double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
 

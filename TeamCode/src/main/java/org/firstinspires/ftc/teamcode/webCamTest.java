@@ -21,6 +21,10 @@ public class webCamTest extends OpMode {
         webcam.update();
         AprilTagDetection id20 = webcam.getTagbySpecificId(20);
         webcam.displayDetectionTelemetry(id20);
+        String[] motif = webcam.getMotif();
+        String motifString = String.join(",", motif);
+
+        telemetry.addData("Motif", motifString);
 
     }
 }

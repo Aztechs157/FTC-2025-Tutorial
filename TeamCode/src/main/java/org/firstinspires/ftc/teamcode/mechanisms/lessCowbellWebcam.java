@@ -85,16 +85,19 @@ public class lessCowbellWebcam {
     }
 
     public String[] getMotif() {
-       switch (getObeliskId().metadata.id) {
-           case 21:
-               return new String[]{"Green", "Purple", "Purple"};
-           case 22:
-               return new String[]{"Purple", "Green", "Purple"};
-           case 23:
-               return new String[]{"Purple", "Purple", "Green"};
-           default:
-               return null;
+       if(getObeliskId() != null) {
+           switch (getObeliskId().metadata.id) {
+               case 21:
+                   return new String[]{"Green", "Purple", "Purple"};
+               case 22:
+                   return new String[]{"Purple", "Green", "Purple"};
+               case 23:
+                   return new String[]{"Purple", "Purple", "Green"};
+               default:
+                   return new String[]{"None"};
+           }
        }
+       return new String[]{"None"};
     }
 
     public void stop() {

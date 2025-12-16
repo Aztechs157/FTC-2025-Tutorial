@@ -64,8 +64,8 @@ import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="6 Ball Auto - BLUE", group="Robot")
-public class straightLineAutoBLUE extends LinearOpMode {
+@Autonomous(name="3 Ball Auto - BLUE", group="Robot")
+public class straightLineAutoBLUESimple extends LinearOpMode {
      lessCowbellDrive drive = new lessCowbellDrive();
      lessCowbellShooterPIDF shooter = new lessCowbellShooterPIDF();
      lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
@@ -102,18 +102,18 @@ public class straightLineAutoBLUE extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(drive.DRIVE_SPEED,  -15,  -15, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+//        encoderTranslate(drive.DRIVE_SPEED,  50,  -50, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(drive.DRIVE_SPEED, -15, -15, 5.0);
         shoot(1500, 3);
+//        encoderDrive(drive.DRIVE_SPEED,  -40,  -40, 5.0); //
         encoderDrive(drive.DRIVE_SPEED,  -35,  35, 5.0); //
-        intake(1, 1);
-        encoderDrive(drive.DRIVE_SPEED*0.5,  50,  50, 5.0);
-        encoderDrive(drive.DRIVE_SPEED,  -50,  -50, 5.0);
-        intake(1, -1);
-        encoderDrive(drive.DRIVE_SPEED,  35,  -35, 5.0); //
-        intake(0, 0);
-        shoot(1500, 3);
-        encoderDrive(drive.DRIVE_SPEED,  -35,  35, 5.0); //
-        encoderDrive(drive.DRIVE_SPEED*0.5,  45,  45, 5.0);
+        intake(1);
+        encoderDrive(drive.DRIVE_SPEED*0.5,  30,  30, 5.0);
+//        encoderDrive(drive.DRIVE_SPEED,  -45,  -45, 5.0);
+//        encoderDrive(drive.DRIVE_SPEED,  15,  -15, 5.0); //
+//        intake(0);
+//        encoderDrive(drive.DRIVE_SPEED,  45,  45, 5.0); //
+//        shoot(1500, 3);
 //        encoderTranslate(drive.DRIVE_SPEED, -10, 10, 5.0);
 
 //        encoderDrive(drive.TURN_SPEED,   24, -24, 4.0);  // S2: Turn Right 24 Inches with 4 Sec timeout
@@ -144,10 +144,10 @@ public class straightLineAutoBLUE extends LinearOpMode {
         }
         shooter.setShooterSpeed(0);
     }
-    public void intake(double intakeSpeed, double spindexerSpeed) {
+    public void intake(double speed) {
 
-            intake.setIntakeSpeed(intakeSpeed);
-            spindexer.setSpindexerSpeed(spindexerSpeed);
+            intake.setIntakeSpeed(speed);
+            spindexer.setSpindexerSpeed(speed);
     }
 
 

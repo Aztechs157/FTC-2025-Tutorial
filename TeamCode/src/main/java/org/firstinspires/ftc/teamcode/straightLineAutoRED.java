@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
-import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooter;
+import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooterPIDF;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
 
 /*
@@ -67,7 +67,7 @@ import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
 @Autonomous(name="6 Ball Auto - RED", group="Robot")
 public class straightLineAutoRED extends LinearOpMode {
      lessCowbellDrive drive = new lessCowbellDrive();
-     lessCowbellShooter shooter = new lessCowbellShooter();
+     lessCowbellShooterPIDF shooter = new lessCowbellShooterPIDF();
      lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
 
      lessCowbellIntake intake = new lessCowbellIntake();
@@ -102,17 +102,20 @@ public class straightLineAutoRED extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(drive.DRIVE_SPEED,  -16.25,  -16.25, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        shoot(-0.75, 3);
-        encoderDrive(drive.DRIVE_SPEED,  -55,  -55, 5.0); //
-        encoderDrive(drive.DRIVE_SPEED,  16.5,  -16.5, 5.0); //
-        intake(1);
-        encoderDrive(drive.DRIVE_SPEED*0.5,  70,  70, 5.0);
-        encoderDrive(drive.DRIVE_SPEED,  -65,  -65, 5.0);
-        encoderDrive(drive.DRIVE_SPEED,  -15,  15, 5.0); //
-        intake(0);
-        encoderDrive(drive.DRIVE_SPEED,  55,  55, 5.0); //
-        shoot(-0.75, 3);
+        encoderDrive(drive.DRIVE_SPEED,  -15,  -15, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        shoot(1500, 3);
+        encoderDrive(drive.DRIVE_SPEED,  35,  -35, 5.0); //
+        intake(1, 1);
+        encoderDrive(drive.DRIVE_SPEED*0.5,  50,  50, 5.0);
+        intake(1, -1);
+        encoderDrive(drive.DRIVE_SPEED,  -50,  -50, 5.0);
+
+        encoderDrive(drive.DRIVE_SPEED,  -35,  35, 5.0); //
+
+        intake(0, 0);
+        shoot(1500, 3);
+        encoderDrive(drive.DRIVE_SPEED,  35,  -35, 5.0); //
+        encoderDrive(drive.DRIVE_SPEED*0.5,  45,  45, 5.0);
 //        encoderTranslate(drive.DRIVE_SPEED, -10, 10, 5.0);
 
 //        encoderDrive(drive.TURN_SPEED,   24, -24, 4.0);  // S2: Turn Right 24 Inches with 4 Sec timeout
@@ -133,7 +136,7 @@ public class straightLineAutoRED extends LinearOpMode {
     public void shoot(double speed,
                       int num_balls) {
         for(int i = 0; i<= num_balls; i++) {
-            shooter.setShooterSpeed(speed);
+            shooter.setShooterVelocity(speed);
             sleep(1000);
             shooter.setHopperSpeed(-1);
             spindexer.setSpindexerSpeed(1);
@@ -143,10 +146,10 @@ public class straightLineAutoRED extends LinearOpMode {
         }
         shooter.setShooterSpeed(0);
     }
-    public void intake(double speed) {
+    public void intake(double intakeSpeed, double spindexerSpeed) {
 
-            intake.setIntakeSpeed(speed);
-            spindexer.setSpindexerSpeed(speed);
+            intake.setIntakeSpeed(intakeSpeed);
+            spindexer.setSpindexerSpeed(spindexerSpeed);
     }
 
 
