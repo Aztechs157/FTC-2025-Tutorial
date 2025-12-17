@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.mechanisms.SpindexerSensor;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellDrive;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellIntake;
-import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooter;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellShooterPIDF;
 import org.firstinspires.ftc.teamcode.mechanisms.lessCowbellSpindexer;
 
@@ -21,7 +19,8 @@ public class bruteForceTeleopPIDF extends LinearOpMode {
   lessCowbellSpindexer spindexer = new lessCowbellSpindexer();
   SpindexerSensor intakeSensor;
   SpindexerSensor hopperSensor;
-
+  SpindexerSensor leftSensor;
+  SpindexerSensor rightSensor;
   double frontLeftPower;
   double backLeftPower;
   double frontRightPower;
@@ -58,6 +57,8 @@ public class bruteForceTeleopPIDF extends LinearOpMode {
     spindexer.init(hardwareMap);
     intakeSensor = new SpindexerSensor(hardwareMap, "colorSensor3-intake", telemetry);
     hopperSensor = new SpindexerSensor(hardwareMap, "colorSensor1-hopper", telemetry);
+    rightSensor = new SpindexerSensor(hardwareMap, "colorSensor0-right", telemetry);
+    leftSensor = new SpindexerSensor(hardwareMap, "colorSensor2-left", telemetry);
 
     runtime = new ElapsedTime();
     // ########################################################################################
@@ -127,9 +128,9 @@ public class bruteForceTeleopPIDF extends LinearOpMode {
       if (gamepad2.dpad_down && intakeSensor.getDetectedColor() != SpindexerSensor.SensorState.empty) {
         spindexer.setSpindexerSpeed(1);
       } else if (gamepad2.dpad_left && hopperSensor.getDetectedColor() != SpindexerSensor.SensorState.green) {
-        spindexer.setSpindexerSpeed(1);
+        spindexer.setSpindexerSpeed(0.5);
       } else if (gamepad2.dpad_right && hopperSensor.getDetectedColor() != SpindexerSensor.SensorState.purple) {
-        spindexer.setSpindexerSpeed(1);
+        spindexer.setSpindexerSpeed(0.5);
       } else if (gamepad2.dpad_up && !(hopperSensor.getDetectedColor() == SpindexerSensor.SensorState.midSpin)) {
         spindexer.setSpindexerSpeed(1);
       } else if (gamepad2.left_bumper) {
@@ -217,7 +218,10 @@ public class bruteForceTeleopPIDF extends LinearOpMode {
       telemetry.addData("Back  left/Right", JavaUtil.formatNumber(backLeftPower, 4, 2) + ", " + JavaUtil.formatNumber(backRightPower, 4, 2));
       telemetry.addData("Intake Sensor State: ", intakeSensor.getDetectedColor());
       telemetry.addData("Hopper Sensor State: ", hopperSensor.getDetectedColor());
-      telemetry.addData("dist", hopperSensor.test());
+      telemetry.addData("Right Sensor State: ", rightSensor.getDetectedColor());
+      telemetry.addData("Left Sensor State: ", leftSensor.getDetectedColor());
+      telemetry.addData("hopper sensor dist: ", hopperSensor.getDist());
+      telemetry.addData("Hopper Sensor Color: ", "Red: %2f, Blue: %2f, Green :%2f", hopperSensor.getRed(), hopperSensor.getBlue(), hopperSensor.getGreen());
       telemetry.update();
     }
   }

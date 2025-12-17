@@ -20,7 +20,12 @@ public class SpindexerSensor {
         midSpin
     }
 
+    public double redVal, blueVal, greenVal;
+
     public SpindexerSensor(HardwareMap hwMap, String deviceName, Telemetry telemetry) {
+        redVal = 0;
+        blueVal = 0;
+        greenVal = 0;
         colorSensor = hwMap.get(NormalizedColorSensor.class, deviceName);
         distanceSensor = hwMap.get(DistanceSensor.class, deviceName);
         colorSensor.setGain(5);
@@ -28,13 +33,20 @@ public class SpindexerSensor {
         this.deviceName = deviceName;
     }
 
-    public double test() {
+    public double getDist() {
         return distanceSensor.getDistance(DistanceUnit.INCH);
     }
 
+    public double getRed() {
+        return colorSensor.getNormalizedColors().red;
+    }
 
-public float hopperRed, hopperGreen, hopperBlue;
-
+    public double getBlue() {
+        return colorSensor.getNormalizedColors().blue;
+    }
+    public double getGreen() {
+        return colorSensor.getNormalizedColors().green;
+    }
 
 
     public SensorState getDetectedColor() {
@@ -45,19 +57,22 @@ public float hopperRed, hopperGreen, hopperBlue;
         normRed = colors.red / colors.alpha;
         normGreen = colors.green / colors.alpha;
         normBlue = colors.blue / colors.alpha;
-        hopperRed = normRed;
-        hopperGreen = normGreen;
-        hopperBlue = normBlue;
+
 
         if (this.deviceName.contains("hopper")) {
             if (1.5  < dist && dist <= 2.1)
             {
                 return SensorState.midSpin;
             }
-            if (normBlue > normGreen){
-                return SensorState.purple;
-            } else{
-                return SensorState.green;
+            if(dist > 2.2) {
+                return SensorState.empty;
+            }
+            if(dist < 1.0) {
+                if (normBlue > normGreen) {
+                    return SensorState.purple;
+                } else {
+                    return SensorState.green;
+                }
             }
         } else {
             if (dist > 1.75) {

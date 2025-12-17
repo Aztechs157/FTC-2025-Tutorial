@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.mechanisms.SpindexerSensor;
@@ -165,7 +164,7 @@ public class bruteForceTeleop extends LinearOpMode {
       telemetry.addData("Back  left/Right", JavaUtil.formatNumber(backLeftPower, 4, 2) + ", " + JavaUtil.formatNumber(backRightPower, 4, 2));
       telemetry.addData("Intake Sensor State: ", intakeSensor.getDetectedColor());
       telemetry.addData("Hopper Sensor State: ", hopperSensor.getDetectedColor());
-      telemetry.addData("dist", hopperSensor.test());
+      telemetry.addData("dist", hopperSensor.getDist());
       telemetry.update();
     }
   }
